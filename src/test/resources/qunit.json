@@ -1,0 +1,12 @@
+{
+  baseUrl : "http://localhost",
+  waitSeconds : 60,
+  tests : [{
+    path : "/web-static-demo/static/js/jquery.cookie.extend.js.test.html",
+    waitSeconds : 30
+  }, {
+    path : "/web-static-demo/static/js/jquery.cookie.menu.js.test.html"
+  }, {
+    path : "/web-static-demo/jquery/js/jquery.cookie.js.test.html"
+  }]
+}
