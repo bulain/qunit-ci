@@ -10,10 +10,12 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.safari.SafariDriver;
 
 public abstract class BaseWebDriver {
     private static final String CHROME_DRIVER = "ChromeDriver";
     private static final String FIREFOX_DRIVER = "FirefoxDriver";
+    private static final String SAFARI_DRIVER = "SafariDriver";
     private static final String INTERNET_EXPLORER_DRIVER = "InternetExplorerDriver";
 
     protected WebDriver driver;
@@ -30,6 +32,8 @@ public abstract class BaseWebDriver {
             driver = new FirefoxDriver();
         } else if (CHROME_DRIVER.equalsIgnoreCase(driverName)) {
             driver = new ChromeDriver();
+        }else if (SAFARI_DRIVER.equalsIgnoreCase(driverName)) {
+            driver = new SafariDriver();
         } else {
             HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver();
             htmlUnitDriver.setJavascriptEnabled(true);

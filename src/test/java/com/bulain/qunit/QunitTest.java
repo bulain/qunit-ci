@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 
 public class QunitTest extends BaseWebDriver {
     private String fileName = "qunit.json";
@@ -57,7 +58,12 @@ public class QunitTest extends BaseWebDriver {
             dir.mkdirs();
         }
 
-        String textContent = testresult.getAttribute("textContent");
+        String textContent;
+        if (driver instanceof InternetExplorerDriver) {
+            textContent = testresult.getAttribute("innerText");
+        } else {
+            textContent = testresult.getAttribute("textContent");
+        }
         String fileName = split[split.length - 1] + ".txt";
         File file = new File(dir, fileName);
         FileWriter fileWriter = new FileWriter(file);
