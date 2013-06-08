@@ -1,9 +1,9 @@
 {
   baseUrl : "http://localhost",
-  waitSeconds : 60,
+  waitSeconds : 1,
   tests : [{
     path : "/web-static-demo/static/js/jquery.cookie.extend.js.test.html",
-    waitSeconds : 30
+    waitSeconds : 2
   }, {
     path : "/web-static-demo/static/js/jquery.cookie.menu.js.test.html"
   }, {

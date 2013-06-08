@@ -48,8 +48,18 @@ public class QunitTest extends BaseWebDriver {
 
         driver.get(baseUrl + path);
 
-        WebElement qunit = driver.findElement(By.id("qunit"));
-        WebElement testresult = qunit.findElement(By.id("qunit-testresult"));
+        WebElement testresult = driver.findElement(By.id("qunit-testresult"));
+        boolean isIE = driver instanceof InternetExplorerDriver;
+        String attrName = isIE ? "innerText" : "textContent";
+        String textContent = testresult.getAttribute(attrName);
+        for (int i = 0; i < 10 && !textContent.contains("completed"); i++) {
+            try {
+                Thread.sleep(waitSeconds * 1000);
+            } catch (InterruptedException e) {
+            }
+            testresult = driver.findElement(By.id("qunit-testresult"));
+            textContent = testresult.getAttribute(attrName);
+        }
         WebElement failed = testresult.findElement(By.className("failed"));
 
         String[] split = path.split("/");
@@ -58,12 +68,6 @@ public class QunitTest extends BaseWebDriver {
             dir.mkdirs();
         }
 
-        String textContent;
-        if (driver instanceof InternetExplorerDriver) {
-            textContent = testresult.getAttribute("innerText");
-        } else {
-            textContent = testresult.getAttribute("textContent");
-        }
         String fileName = split[split.length - 1] + ".txt";
         File file = new File(dir, fileName);
         FileWriter fileWriter = new FileWriter(file);
@@ -92,5 +96,4 @@ public class QunitTest extends BaseWebDriver {
         return "0".equals(failed.getText());
 
     }
-
 }
