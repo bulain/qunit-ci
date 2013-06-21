@@ -24,6 +24,7 @@
         <selenium.version>2.33.0</selenium.version>
         <xml.version>1.4.01</xml.version>
         <json.version>20080701</json.version>
+        <phantomjs.version>1.0.3</phantomjs.version>
         <WebDriver>PhantomJSDriver</WebDriver>
     </properties>
 
@@ -50,7 +51,7 @@
         <dependency>
             <groupId>com.github.detro.ghostdriver</groupId>
             <artifactId>phantomjsdriver</artifactId>
-            <version>1.0.3</version>
+            <version>${phantomjs.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.seleniumhq.selenium</groupId>
@@ -86,7 +87,7 @@
     </dependencies>
 
     <build>
-        <finalName>activiti5-demo</finalName>
+        <finalName>qunit-ci</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
