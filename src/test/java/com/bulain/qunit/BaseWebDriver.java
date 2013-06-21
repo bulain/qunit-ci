@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
@@ -23,7 +23,7 @@ public abstract class BaseWebDriver {
     @Before
     public void setUp() {
         String driverName = System.getProperty("WebDriver");
-        
+
         if (INTERNET_EXPLORER_DRIVER.equalsIgnoreCase(driverName)) {
             DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
             ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
@@ -32,12 +32,13 @@ public abstract class BaseWebDriver {
             driver = new FirefoxDriver();
         } else if (CHROME_DRIVER.equalsIgnoreCase(driverName)) {
             driver = new ChromeDriver();
-        }else if (SAFARI_DRIVER.equalsIgnoreCase(driverName)) {
+        } else if (SAFARI_DRIVER.equalsIgnoreCase(driverName)) {
             driver = new SafariDriver();
         } else {
-            HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver();
-            htmlUnitDriver.setJavascriptEnabled(true);
-            driver = htmlUnitDriver;
+            DesiredCapabilities phantomjs = DesiredCapabilities.phantomjs();
+            phantomjs.setJavascriptEnabled(true);
+            phantomjs.setCapability("takesScreenshot", true);
+            driver = new PhantomJSDriver(phantomjs);
         }
     }
 
