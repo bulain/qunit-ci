@@ -20,7 +20,10 @@ public class QunitTest extends BaseWebDriver {
     public void testQunit() throws Exception {
         JSONObject json = QunitUtils.parseJson(fileName);
 
-        String baseUrl = json.getString("baseUrl");
+        String baseUrl  = System.getProperty("BaseUrl");
+        if (baseUrl == null) {
+            baseUrl = json.getString("baseUrl");
+        }
         long defaultWaitSeconds = json.getLong("waitSeconds");
 
         boolean asserts = true;

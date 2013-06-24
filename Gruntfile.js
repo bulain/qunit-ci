@@ -2,13 +2,17 @@ module.exports = function(grunt) {
 
   grunt
       .initConfig({
+        env : {
+          baseUrl : 'http://localhost:'+ (grunt.option('port')||8000),
+          port : grunt.option('port')||8000
+        },
         clean: {
           build: ["target"]
         },
         connect : {
           server : {
             options : {
-              port : 8000,
+              port : '<%=env.port%>',
               base : 'src'
             }
           }
@@ -16,34 +20,34 @@ module.exports = function(grunt) {
         qunit : {
           all : {
             options : {
-              urls : ['http://localhost:8000/test/qunit/index.html']
+              urls : ['<%=env.baseUrl%>/test/qunit/index.html']
             }
           }
         },
         shell : {
           firefox : {
             command : [
-                'mvn test -DWebDriver=FirefoxDriver'
+                'mvn test -DWebDriver=FirefoxDriver -DBaseUrl=<%=env.baseUrl%>'
                 ].join('&&')
           },
           chrome : {
             command : [
-                'mvn test -DWebDriver=ChromeDriver'
+                'mvn test -DWebDriver=ChromeDriver -DBaseUrl=<%=env.baseUrl%>'
                 ].join('&&')
           },
           phantom : {
             command : [
-                'mvn test -DWebDriver=PhantomJSDriver'
+                'mvn test -DWebDriver=PhantomJSDriver -DBaseUrl=<%=env.baseUrl%>'
                 ].join('&&'),
           },
           ie : {
             command : [
-                'mvn test -DWebDriver=InternetExplorerDriver'
+                'mvn test -DWebDriver=InternetExplorerDriver -DBaseUrl=<%=env.baseUrl%>'
                 ].join('&&'),
           },
           safari : {
             command : [
-                'mvn test -DWebDriver=SafariDriver'
+                'mvn test -DWebDriver=SafariDriver -DBaseUrl=<%=env.baseUrl%>'
                 ].join('&&'),
           }
         }

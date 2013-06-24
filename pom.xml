@@ -114,7 +114,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-DWebDriver=${WebDriver}</argLine>
+                    <argLine>-DWebDriver=${WebDriver} -DBaseUrl=${BaseUrl}</argLine>
                 </configuration>
             </plugin>
         </plugins>
