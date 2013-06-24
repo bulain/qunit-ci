@@ -4,11 +4,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -19,7 +17,7 @@ public class QunitTest extends BaseWebDriver {
     private String fileName = "qunit.json";
 
     @Test
-    public void testQunit() throws IOException, JSONException {
+    public void testQunit() throws Exception {
         JSONObject json = QunitUtils.parseJson(fileName);
 
         String baseUrl = json.getString("baseUrl");
@@ -43,57 +41,71 @@ public class QunitTest extends BaseWebDriver {
         assertTrue("should pass qunit testing.", asserts);
     }
 
-    public boolean testPath(String baseUrl, String path, long waitSeconds) throws IOException {
-        implicitlyWait(waitSeconds);
+    public boolean testPath(String baseUrl, String path, long waitSeconds) throws Exception {
 
-        driver.get(baseUrl + path);
+        String textContent = null;
+        String innerHTML = null;
+        boolean result = false;
+        Exception exception = null;
 
-        WebElement testresult = driver.findElement(By.id("qunit-testresult"));
-        boolean isIE = driver instanceof InternetExplorerDriver;
-        String attrName = isIE ? "innerText" : "textContent";
-        String textContent = testresult.getAttribute(attrName);
-        for (int i = 0; i < 10 && !textContent.contains("completed"); i++) {
-            try {
-                Thread.sleep(waitSeconds * 1000);
-            } catch (InterruptedException e) {
-            }
-            testresult = driver.findElement(By.id("qunit-testresult"));
+        try {
+            implicitlyWait(waitSeconds);
+
+            driver.get(baseUrl + path);
+
+            WebElement testresult = driver.findElement(By.id("qunit-testresult"));
+            boolean isIE = driver instanceof InternetExplorerDriver;
+            String attrName = isIE ? "innerText" : "textContent";
             textContent = testresult.getAttribute(attrName);
+            for (int i = 0; i < 10 && !textContent.contains("completed"); i++) {
+                try {
+                    Thread.sleep(waitSeconds * 1000);
+                } catch (InterruptedException e) {
+                }
+                testresult = driver.findElement(By.id("qunit-testresult"));
+                textContent = testresult.getAttribute(attrName);
+            }
+            WebElement failed = testresult.findElement(By.className("failed"));
+            WebElement xml = driver.findElement(By.id("qunit-xml"));
+            innerHTML = xml.getAttribute("innerHTML");
+            result = "0".equals(failed.getText());
+        } catch (Exception t) {
+            exception = t;
         }
-        WebElement failed = testresult.findElement(By.className("failed"));
 
         String[] split = path.split("/");
         File dir = new File("target/surefire-reports");
         if (!dir.exists()) {
             dir.mkdirs();
         }
+        String txtFileName = "TEST-" + driverName + "-" + split[split.length - 1] + ".txt";
+        String xmlFileName = "TEST-" + driverName + "-" + split[split.length - 1] + ".xml";
 
-        String fileName = "TEST-" + driverName + "-" + split[split.length - 1] + ".txt";
-        File file = new File(dir, fileName);
-        FileWriter fileWriter = new FileWriter(file);
-        PrintWriter writer = new PrintWriter(fileWriter);
-        writer.println("-------------------------------------------------------------------------------");
-        writer.println("Test set: " + path);
-        writer.println("-------------------------------------------------------------------------------");
-        writer.println(textContent);
-        writer.flush();
-        writer.close();
+        File txtFile = new File(dir, txtFileName);
+        FileWriter txtFileWriter = new FileWriter(txtFile);
+        PrintWriter txtWriter = new PrintWriter(txtFileWriter);
+        txtWriter.println("-------------------------------------------------------------------------------");
+        txtWriter.println("Test set: " + path);
+        txtWriter.println("-------------------------------------------------------------------------------");
+        if (exception != null) {
+            exception.printStackTrace(txtWriter);
+        } else {
+            txtWriter.println(textContent);
+        }
+        txtWriter.flush();
+        txtWriter.close();
+        
+        if (exception != null) {
+            throw exception;
+        }
 
-        System.out.println("-------------------------------------------------------------------------------");
-        System.out.println("Test set: " + path);
-        System.out.println(textContent);
-
-        WebElement xml = driver.findElement(By.id("qunit-xml"));
-        String innerHTML = xml.getAttribute("innerHTML");
-        fileName = "TEST-" + driverName + "-" + split[split.length - 1] + ".xml";
-        file = new File(dir, fileName);
-        fileWriter = new FileWriter(file);
-        writer = new PrintWriter(fileWriter);
-        writer.println(innerHTML);
-        writer.flush();
-        writer.close();
-
-        return "0".equals(failed.getText());
-
+        File xmlFile = new File(dir, xmlFileName);
+        FileWriter xmlFileWriter = new FileWriter(xmlFile);
+        PrintWriter xmlWriter = new PrintWriter(xmlFileWriter);
+        xmlWriter.println(innerHTML);
+        xmlWriter.flush();
+        xmlWriter.close();
+        
+        return result;
     }
 }
