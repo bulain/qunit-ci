@@ -18,23 +18,27 @@ public abstract class BaseWebDriver {
     private static final String SAFARI_DRIVER = "SafariDriver";
     private static final String INTERNET_EXPLORER_DRIVER = "InternetExplorerDriver";
 
+    protected String driverName;
     protected WebDriver driver;
 
     @Before
     public void setUp() {
-        String driverName = System.getProperty("WebDriver");
+        driverName = System.getProperty("WebDriver");
 
         if (INTERNET_EXPLORER_DRIVER.equalsIgnoreCase(driverName)) {
             DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
             ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
             driver = new InternetExplorerDriver(ieCapabilities);
         } else if (FIREFOX_DRIVER.equalsIgnoreCase(driverName)) {
-            driver = new FirefoxDriver();
+            DesiredCapabilities firefox = DesiredCapabilities.firefox();
+            driver = new FirefoxDriver(firefox);
         } else if (CHROME_DRIVER.equalsIgnoreCase(driverName)) {
-            driver = new ChromeDriver();
+            DesiredCapabilities chrome = DesiredCapabilities.chrome();
+            driver = new ChromeDriver(chrome);
         } else if (SAFARI_DRIVER.equalsIgnoreCase(driverName)) {
             driver = new SafariDriver();
         } else {
+            driverName = "PhantomJSDriver";
             DesiredCapabilities phantomjs = DesiredCapabilities.phantomjs();
             phantomjs.setJavascriptEnabled(true);
             phantomjs.setCapability("takesScreenshot", true);

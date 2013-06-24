@@ -68,7 +68,7 @@ public class QunitTest extends BaseWebDriver {
             dir.mkdirs();
         }
 
-        String fileName = split[split.length - 1] + ".txt";
+        String fileName = "TEST-" + driverName + "-" + split[split.length - 1] + ".txt";
         File file = new File(dir, fileName);
         FileWriter fileWriter = new FileWriter(file);
         PrintWriter writer = new PrintWriter(fileWriter);
@@ -85,7 +85,7 @@ public class QunitTest extends BaseWebDriver {
 
         WebElement xml = driver.findElement(By.id("qunit-xml"));
         String innerHTML = xml.getAttribute("innerHTML");
-        fileName = "TEST-" + split[split.length - 1] + ".xml";
+        fileName = "TEST-" + driverName + "-" + split[split.length - 1] + ".xml";
         file = new File(dir, fileName);
         fileWriter = new FileWriter(file);
         writer = new PrintWriter(fileWriter);

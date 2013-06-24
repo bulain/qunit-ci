@@ -1,12 +1,8 @@
 {
-  baseUrl : "http://localhost",
+  baseUrl : "http://localhost:8000",
   waitSeconds : 1,
   tests : [{
-    path : "/web-static-demo/static/js/jquery.cookie.extend.js.test.html",
+    path : "/test/qunit/index.html",
     waitSeconds : 2
-  }, {
-    path : "/web-static-demo/static/js/jquery.cookie.menu.js.test.html"
-  }, {
-    path : "/web-static-demo/jquery/js/jquery.cookie.js.test.html"
   }]
 }
