@@ -7,7 +7,9 @@
   "scripts": {
     "test": "grunt"
   },
-  "dependencies": {},
+  "dependencies": {
+    "selenium-webdriver": "~2.33.0"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-cli": "~0.1.9",
