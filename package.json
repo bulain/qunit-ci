@@ -8,7 +8,9 @@
     "test": "grunt"
   },
   "dependencies": {
-    "selenium-webdriver": "~2.33.0"
+    "selenium-webdriver": "~2.33.0",
+    "async": "~0.2.9",
+    "should": "~1.2.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
