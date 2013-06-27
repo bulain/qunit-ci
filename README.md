@@ -4,10 +4,6 @@
 3. Using qunit-reporter-junit to gengerate junit style test report.
 
 ###If you want to run this project, please follow the next steps:
-#####checkout out parent and run: 
-    git clone https://github.com/bulain/parent.git
-    mvn install
-    
 #####checkout out qunit-ci:
     git clone https://github.com/bulain/qunit-ci.git
     mvn eclipse:eclipse
