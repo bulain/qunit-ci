@@ -10,6 +10,7 @@
 
 #####run testing
 download chromedriver, phantomjs and IEDriverServer, SafariDriver then put them into PATH.
+
     npm install
     grunt test
     grunt it
