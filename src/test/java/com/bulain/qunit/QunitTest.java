@@ -11,7 +11,6 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 
 public class QunitTest extends BaseWebDriver {
     private String fileName = "qunit.json";
@@ -57,16 +56,14 @@ public class QunitTest extends BaseWebDriver {
             driver.get(baseUrl + path);
 
             WebElement testresult = driver.findElement(By.id("qunit-testresult"));
-            boolean isIE = driver instanceof InternetExplorerDriver;
-            String attrName = isIE ? "innerText" : "textContent";
-            textContent = testresult.getAttribute(attrName);
+            textContent = testresult.getAttribute("textContent");
             for (int i = 0; i < 10 && !textContent.contains("completed"); i++) {
                 try {
                     Thread.sleep(waitSeconds * 1000);
                 } catch (InterruptedException e) {
                 }
                 testresult = driver.findElement(By.id("qunit-testresult"));
-                textContent = testresult.getAttribute(attrName);
+                textContent = testresult.getAttribute("textContent");
             }
             WebElement failed = testresult.findElement(By.className("failed"));
             WebElement xml = driver.findElement(By.id("qunit-xml"));
