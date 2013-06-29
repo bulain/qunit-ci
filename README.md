@@ -12,7 +12,8 @@
 download chromedriver, phantomjs and IEDriverServer, SafariDriver then put them into PATH.
 
     npm install
+    grunt 
     grunt test
-    grunt it
-    grunt all --port=9000
+    grunt test --port=9000 --seleniumPort=4444
+    grunt all
     
