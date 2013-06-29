@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class QunitTest extends BaseWebDriver {
+public class QunitIT extends BaseWebDriver {
     private String fileName = "qunit.json";
 
     @Test

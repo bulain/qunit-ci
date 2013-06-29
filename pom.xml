@@ -20,11 +20,15 @@
         <compiler.version>2.3.2</compiler.version>
         <source.version>2.1.2</source.version>
         <surefire.version>2.4.3</surefire.version>
+        <jetty7.version>7.6.2.v20120308</jetty7.version>
         <selenium.version>2.33.0</selenium.version>
         <xml.version>1.4.01</xml.version>
         <json.version>20080701</json.version>
         <phantomjs.version>1.0.3</phantomjs.version>
         <WebDriver>PhantomJSDriver</WebDriver>
+        <BaseUrl>http://localhost:8000</BaseUrl>
+        <Port>8000</Port>
+        <StopPort>9900</StopPort>
     </properties>
 
     <dependencies>
@@ -114,12 +118,69 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty7.version}</version>
                 <configuration>
+                    <argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <stopKey>foo</stopKey>
+                    <stopPort>${StopPort}</stopPort>
+                    <webAppSourceDirectory>src</webAppSourceDirectory>
+                    <webAppConfig>
+                        <contextPath>/</contextPath>
+                    </webAppConfig>
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                            <port>${Port}</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                    </connectors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-jetty</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <scanIntervalSeconds>0</scanIntervalSeconds>
+                            <daemon>true</daemon>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-jetty</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
                     <argLine>-DWebDriver=${WebDriver} -DBaseUrl=${BaseUrl}</argLine>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
