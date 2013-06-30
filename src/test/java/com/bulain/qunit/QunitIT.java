@@ -19,31 +19,38 @@ public class QunitIT extends BaseWebDriver {
     public void testQunit() throws Exception {
         JSONObject json = QunitUtils.parseJson(fileName);
 
-        String baseUrl  = System.getProperty("BaseUrl");
+        String baseUrl = System.getProperty("baseUrl");
         if (baseUrl == null) {
             baseUrl = json.getString("baseUrl");
         }
         long defaultWaitSeconds = json.getLong("waitSeconds");
 
-        boolean asserts = true;
         JSONArray tests = json.getJSONArray("tests");
-        for (int i = 0; i < tests.length(); i++) {
-            JSONObject test = tests.getJSONObject(i);
-            long waitSeconds = defaultWaitSeconds;
+        for (String browserName : browserNames) {
+            try {
+                boolean asserts = true;
+                setUp(browserName);
+                for (int i = 0; i < tests.length(); i++) {
+                    JSONObject test = tests.getJSONObject(i);
+                    long waitSeconds = defaultWaitSeconds;
 
-            if (test.has("waitSeconds")) {
-                waitSeconds = test.getLong("waitSeconds");
+                    if (test.has("waitSeconds")) {
+                        waitSeconds = test.getLong("waitSeconds");
+                    }
+
+                    String path = test.getString("path");
+                    boolean results = testPath(browserName, baseUrl, path, waitSeconds);
+                    asserts = asserts && results;
+                }
+                tearDown();
+                assertTrue("should pass qunit testing.", asserts);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            String path = test.getString("path");
-            boolean results = testPath(baseUrl, path, waitSeconds);
-            asserts = asserts && results;
         }
-
-        assertTrue("should pass qunit testing.", asserts);
     }
 
-    public boolean testPath(String baseUrl, String path, long waitSeconds) throws Exception {
+    public boolean testPath(String browserName, String baseUrl, String path, long waitSeconds) throws Exception {
 
         String textContent = null;
         String innerHTML = null;
@@ -78,8 +85,8 @@ public class QunitIT extends BaseWebDriver {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        String txtFileName = "TEST-" + driverName + "-" + split[split.length - 1] + ".txt";
-        String xmlFileName = "TEST-" + driverName + "-" + split[split.length - 1] + ".xml";
+        String txtFileName = "TEST-" + browserName + "-" + split[split.length - 1] + ".txt";
+        String xmlFileName = "TEST-" + browserName + "-" + split[split.length - 1] + ".xml";
 
         File txtFile = new File(dir, txtFileName);
         FileWriter txtFileWriter = new FileWriter(txtFile);
@@ -94,7 +101,7 @@ public class QunitIT extends BaseWebDriver {
         }
         txtWriter.flush();
         txtWriter.close();
-        
+
         if (exception != null) {
             throw exception;
         }
@@ -105,7 +112,7 @@ public class QunitIT extends BaseWebDriver {
         xmlWriter.println(innerHTML);
         xmlWriter.flush();
         xmlWriter.close();
-        
+
         return result;
     }
 }

@@ -25,5 +25,6 @@ Java version
 ```shell
 mvn eclipse:eclipse
 mvn verify
-mvn verify -DWebDriver=ChromeDriver -DBaseUrl=http://localhost:8000 -DPort=8000 -DStopPort=9900
+mvn verify -Plinux
+mvn verify -Pwindows -Dport=8000 -DstopPort=9900
 ```

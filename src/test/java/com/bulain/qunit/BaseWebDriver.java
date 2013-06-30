@@ -2,8 +2,7 @@ package com.bulain.qunit;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -13,35 +12,40 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
 public abstract class BaseWebDriver {
-    private static final String CHROME_DRIVER = "ChromeDriver";
-    private static final String FIREFOX_DRIVER = "FirefoxDriver";
-    private static final String SAFARI_DRIVER = "SafariDriver";
-    private static final String INTERNET_EXPLORER_DRIVER = "InternetExplorerDriver";
+    private static final String CHROME = "chrome";
+    private static final String FIREFOX = "firefox";
+    private static final String SAFARI = "safari";
+    private static final String IE = "ie";
+    private static final String PHANTOMJS = "phantomjs";
 
-    protected String driverName;
+    protected static String[] browserNames;
     protected WebDriver driver;
 
-    @Before
-    public void setUp() {
-        driverName = System.getProperty("WebDriver");
+    @BeforeClass
+    public static void setUpClass() {
+        String temp = System.getProperty("browserNames");
+        if (temp != null) {
+            browserNames = temp.split(",");
+        } else {
+            browserNames = new String[]{PHANTOMJS};
+        }
+    }
 
-        if (INTERNET_EXPLORER_DRIVER.equalsIgnoreCase(driverName)) {
+    protected void setUp(String browserName) {
+        if (IE.equalsIgnoreCase(browserName)) {
             DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
             ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
             driver = new InternetExplorerDriver(ieCapabilities);
-        } else if (FIREFOX_DRIVER.equalsIgnoreCase(driverName)) {
+        } else if (FIREFOX.equalsIgnoreCase(browserName)) {
             DesiredCapabilities firefox = DesiredCapabilities.firefox();
             driver = new FirefoxDriver(firefox);
-        } else if (CHROME_DRIVER.equalsIgnoreCase(driverName)) {
+        } else if (CHROME.equalsIgnoreCase(browserName)) {
             DesiredCapabilities chrome = DesiredCapabilities.chrome();
             driver = new ChromeDriver(chrome);
-        } else if (SAFARI_DRIVER.equalsIgnoreCase(driverName)) {
+        } else if (SAFARI.equalsIgnoreCase(browserName)) {
             driver = new SafariDriver();
         } else {
-            driverName = "PhantomJSDriver";
             DesiredCapabilities phantomjs = DesiredCapabilities.phantomjs();
-            phantomjs.setJavascriptEnabled(true);
-            phantomjs.setCapability("takesScreenshot", true);
             driver = new PhantomJSDriver(phantomjs);
         }
     }
@@ -50,11 +54,8 @@ public abstract class BaseWebDriver {
         driver.manage().timeouts().implicitlyWait(waitSeconds, TimeUnit.SECONDS);
     }
 
-    @After
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+    protected void tearDown() {
+        driver.quit();
         driver = null;
     }
 

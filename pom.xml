@@ -26,10 +26,10 @@
         <xml.version>1.4.01</xml.version>
         <json.version>20080701</json.version>
         <phantomjs.version>1.0.3</phantomjs.version>
-        <WebDriver>PhantomJSDriver</WebDriver>
-        <BaseUrl>http://localhost:8000</BaseUrl>
-        <Port>8000</Port>
-        <StopPort>9900</StopPort>
+        <browserNames>phantomjs</browserNames>
+        <port>8000</port>
+        <stopPort>9900</stopPort>
+        <baseUrl>http://localhost:${port}</baseUrl>
     </properties>
 
     <dependencies>
@@ -37,27 +37,32 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>${xml.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.detro.ghostdriver</groupId>
             <artifactId>phantomjsdriver</artifactId>
             <version>${phantomjs.version}</version>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.seleniumhq.selenium</groupId>
@@ -90,6 +95,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -126,14 +132,14 @@
                     <argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <stopKey>foo</stopKey>
-                    <stopPort>${StopPort}</stopPort>
+                    <stopPort>${stopPort}</stopPort>
                     <webAppSourceDirectory>src</webAppSourceDirectory>
                     <webAppConfig>
                         <contextPath>/</contextPath>
                     </webAppConfig>
                     <connectors>
                         <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                            <port>${Port}</port>
+                            <port>${port}</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>
                     </connectors>
@@ -167,7 +173,7 @@
                     <includes>
                         <include>**/*IT.java</include>
                     </includes>
-                    <argLine>-DWebDriver=${WebDriver} -DBaseUrl=${BaseUrl}</argLine>
+                    <argLine>-DbrowserNames=${browserNames} -DbaseUrl=${baseUrl} </argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -186,4 +192,18 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>linux</id>
+            <properties>
+                <browserNames>phantomjs,chrome,firefox</browserNames>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <properties>
+                <browserNames>phantomjs,chrome,firefox,ie,safari</browserNames>
+            </properties>
+        </profile>
+    </profiles>
 </project>
