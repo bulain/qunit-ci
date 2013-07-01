@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         port : grunt.option('port') || 8000,
         seleniumPort : grunt.option('seleniumPort') || 4444,
         reportsDir: 'target/surefire-reports',
-        qunitJson : process.cwd()+'/src/test/resources/qunit.node.json',
+        qunitJson : process.cwd()+'/src/test/resources/qunit.json',
       },
       clean: {
         build: ["target"]
@@ -34,39 +34,23 @@ module.exports = function(grunt) {
       webdriver_qunit: {
         phantomjs: {
           options: {
-            browserName: 'phantomjs',
+            browserNames: ['phantomjs'],
             reportsDir: '<%=env.reportsDir%>',
             qunitJson: '<%=env.qunitJson%>',
             baseUrl: '<%=env.baseUrl%>',
           }
         },
-        chrome: {
+        linux: {
           options: {
-            browserName: 'chrome',
+            browserNames: ['phantomjs', 'chrome', 'firefox'],
             reportsDir: '<%=env.reportsDir%>',
             qunitJson: '<%=env.qunitJson%>',
             baseUrl: '<%=env.baseUrl%>',
           }
         },
-        firefox: {
+        windows: {
           options: {
-            browserName: 'firefox',
-            reportsDir: '<%=env.reportsDir%>',
-            qunitJson: '<%=env.qunitJson%>',
-            baseUrl: '<%=env.baseUrl%>',
-          }
-        },
-        ie: {
-          options: {
-            browserName: 'ie',
-            reportsDir: '<%=env.reportsDir%>',
-            qunitJson: '<%=env.qunitJson%>',
-            baseUrl: '<%=env.baseUrl%>',
-          }
-        },
-        safari: {
-          options: {
-            browserName: 'safari',
+            browserNames: ['phantomjs', 'chrome', 'firefox', 'ie', 'safari'],
             reportsDir: '<%=env.reportsDir%>',
             qunitJson: '<%=env.qunitJson%>',
             baseUrl: '<%=env.baseUrl%>',
@@ -82,9 +66,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-webdriver-qunit');
 
   grunt.registerTask('default', ['clean', 'connect', 'qunit']);
-  grunt.registerTask('linux', ['webdriver_startup', 'webdriver_qunit:phantomjs', 'webdriver_qunit:chrome', 'webdriver_qunit:firefox']);
-  grunt.registerTask('windows', ['webdriver_startup', 'webdriver_qunit:phantomjs', 'webdriver_qunit:chrome', 'webdriver_qunit:firefox', 'webdriver_qunit:ie', 'webdriver_qunit:safari']);
-  grunt.registerTask('test', ['clean', 'connect', 'linux']);
-  grunt.registerTask('all', ['clean', 'connect', 'qunit', 'windows']);
+  grunt.registerTask('test', ['clean', 'connect', 'webdriver_startup', 'webdriver_qunit:linux']);
+  grunt.registerTask('all', ['clean', 'connect', 'qunit', 'webdriver_startup', 'webdriver_qunit:windows']);
 
 };

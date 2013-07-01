@@ -1,8 +1,8 @@
 {
   "baseUrl" : "http://localhost",
-  "waitSeconds" : 1,
+  "waitSeconds" : 10,
   "tests" : [{
     "path" : "/test/qunit/index.html",
-    "waitSeconds" : 2
+    "waitSeconds" : 20
   }]
 }
