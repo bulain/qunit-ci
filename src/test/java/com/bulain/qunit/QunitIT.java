@@ -13,16 +13,32 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class QunitIT extends BaseWebDriver {
-    private String fileName = "qunit.json";
+    private static String DEFAULT_REPORTS_DIR = "target/surefire-reports";
+    private static String DEFAULT_FILE_NAME = "qunit.json"; 
+    
+    private String fileName;
+    private String baseUrl;
+    private String reportsDir;
 
     @Test
     public void testQunit() throws Exception {
+        reportsDir = System.getProperty("reportsDir");
+        if(reportsDir == null){
+            reportsDir = DEFAULT_REPORTS_DIR;
+        }
+        
+        fileName = System.getProperty("qunitConfig");
+        if(fileName == null){
+            fileName = DEFAULT_FILE_NAME;
+        }
+        
         JSONObject json = QunitUtils.parseJson(fileName);
 
-        String baseUrl = System.getProperty("baseUrl");
+        baseUrl = System.getProperty("baseUrl");
         if (baseUrl == null) {
             baseUrl = json.getString("baseUrl");
         }
+        
         long defaultWaitSeconds = json.getLong("waitSeconds");
 
         JSONArray tests = json.getJSONArray("tests");
@@ -39,7 +55,7 @@ public class QunitIT extends BaseWebDriver {
                     }
 
                     String path = test.getString("path");
-                    boolean results = testPath(browserName, baseUrl, path, waitSeconds);
+                    boolean results = testPath(browserName, path, waitSeconds);
                     asserts = asserts && results;
                 }
                 tearDown();
@@ -50,7 +66,7 @@ public class QunitIT extends BaseWebDriver {
         }
     }
 
-    public boolean testPath(String browserName, String baseUrl, String path, long waitSeconds) throws Exception {
+    public boolean testPath(String browserName, String path, long waitSeconds) throws Exception {
 
         String textContent = null;
         String innerHTML = null;
@@ -80,19 +96,23 @@ public class QunitIT extends BaseWebDriver {
             exception = t;
         }
 
-        String[] split = path.split("/");
-        File dir = new File("target/surefire-reports");
+        int lastIndex = path.lastIndexOf("/");
+        String folder = path.substring(0, lastIndex);
+        String fileName = path.substring(lastIndex);
+        
+        File dir = new File(reportsDir + "/" + browserName + folder);
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        String txtFileName = "TEST-" + browserName + "-" + split[split.length - 1] + ".txt";
-        String xmlFileName = "TEST-" + browserName + "-" + split[split.length - 1] + ".xml";
+        
+        String txtFileName = fileName + ".txt";
+        String xmlFileName = fileName + ".xml";
 
         File txtFile = new File(dir, txtFileName);
         FileWriter txtFileWriter = new FileWriter(txtFile);
         PrintWriter txtWriter = new PrintWriter(txtFileWriter);
         txtWriter.println("-------------------------------------------------------------------------------");
-        txtWriter.println("Test set: " + path);
+        txtWriter.println("Test set: " + baseUrl + path);
         txtWriter.println("-------------------------------------------------------------------------------");
         if (exception != null) {
             exception.printStackTrace(txtWriter);
