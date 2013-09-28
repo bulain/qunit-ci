@@ -13,32 +13,15 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class QunitIT extends BaseWebDriver {
-    private static String DEFAULT_REPORTS_DIR = "target/surefire-reports";
-    private static String DEFAULT_FILE_NAME = "qunit.json"; 
-    
-    private String fileName;
     private String baseUrl;
-    private String reportsDir;
 
     @Test
     public void testQunit() throws Exception {
-        reportsDir = System.getProperty("reportsDir");
-        if(reportsDir == null){
-            reportsDir = DEFAULT_REPORTS_DIR;
-        }
-        
-        fileName = System.getProperty("qunitConfig");
-        if(fileName == null){
-            fileName = DEFAULT_FILE_NAME;
-        }
-        
         JSONObject json = QunitUtils.parseJson(fileName);
-
         baseUrl = System.getProperty("baseUrl");
         if (baseUrl == null) {
             baseUrl = json.getString("baseUrl");
         }
-        
         long defaultWaitSeconds = json.getLong("waitSeconds");
 
         JSONArray tests = json.getJSONArray("tests");
@@ -80,9 +63,9 @@ public class QunitIT extends BaseWebDriver {
 
             WebElement testresult = driver.findElement(By.id("qunit-testresult"));
             textContent = testresult.getAttribute("textContent");
-            for (int i = 0; i < 10 && !textContent.contains("completed"); i++) {
+            for (int i = 0; i < 10 * waitSeconds && !textContent.contains("completed"); i++) {
                 try {
-                    Thread.sleep(waitSeconds * 1000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                 }
                 testresult = driver.findElement(By.id("qunit-testresult"));
@@ -99,12 +82,12 @@ public class QunitIT extends BaseWebDriver {
         int lastIndex = path.lastIndexOf("/");
         String folder = path.substring(0, lastIndex);
         String fileName = path.substring(lastIndex);
-        
+
         File dir = new File(reportsDir + "/" + browserName + folder);
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        
+
         String txtFileName = fileName + ".txt";
         String xmlFileName = fileName + ".xml";
 
