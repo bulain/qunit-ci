@@ -2,6 +2,7 @@
 .project
 .settings/
 libpeerconnection.log
+phantomjsdriver.log
 target/
 node_modules/
 

@@ -21,7 +21,7 @@
         <source.version>2.1.2</source.version>
         <surefire.version>2.4.3</surefire.version>
         <jetty7.version>7.6.2.v20120308</jetty7.version>
-        <selenium.version>2.33.0</selenium.version>
+        <selenium.version>2.35.0</selenium.version>
         <failsafe.version>2.5</failsafe.version>
         <xml.version>1.4.01</xml.version>
         <json.version>20080701</json.version>
