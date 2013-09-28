@@ -11,6 +11,14 @@ module.exports = function(grunt) {
       clean: {
         build: ["target"]
       },
+      'curl-dir': {
+        long:{
+          src: [
+            'https://selenium.googlecode.com/files/selenium-server-standalone-2.35.0.jar'
+          ],
+          dest: 'node_modules/.bin'
+        }
+      },
       connect : {
         server : {
           options : {
@@ -32,28 +40,24 @@ module.exports = function(grunt) {
         }
       },
       webdriver_qunit: {
+        options: {
+          reportsDir: '<%=env.reportsDir%>',
+          qunitJson: '<%=env.qunitJson%>',
+          baseUrl: '<%=env.baseUrl%>',
+        },
         phantomjs: {
           options: {
             browserNames: ['phantomjs'],
-            reportsDir: '<%=env.reportsDir%>',
-            qunitJson: '<%=env.qunitJson%>',
-            baseUrl: '<%=env.baseUrl%>',
           }
         },
         linux: {
           options: {
             browserNames: ['phantomjs', 'chrome', 'firefox'],
-            reportsDir: '<%=env.reportsDir%>',
-            qunitJson: '<%=env.qunitJson%>',
-            baseUrl: '<%=env.baseUrl%>',
           }
         },
         windows: {
           options: {
             browserNames: ['phantomjs', 'chrome', 'firefox', 'ie', 'safari'],
-            reportsDir: '<%=env.reportsDir%>',
-            qunitJson: '<%=env.qunitJson%>',
-            baseUrl: '<%=env.baseUrl%>',
           }
         },
       },
@@ -63,6 +67,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-webdriver-qunit');
+  grunt.loadNpmTasks('grunt-curl');
 
   grunt.registerTask('default', ['clean', 'connect', 'qunit']);
   grunt.registerTask('test', ['clean', 'connect', 'webdriver_startup', 'webdriver_qunit:linux']);
